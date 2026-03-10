@@ -46,3 +46,49 @@ body {
     width: 100%;
     border: 1px solid #e9ecef;
 }
+
+body {
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 14px;
+}
+
+.form-control {
+    border-radius: 10px;
+}
+
+.btn-dark {
+    border-radius: 10px;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #f8f9fa;
+}
+
+.card {
+    border-radius: 14px;
+}
+
+.form-control {
+    border-radius: 10px;
+}
+
+.btn-dark {
+    border-radius: 10px;
+}
+
+.auth-container {
+    height: calc(100vh - 120px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+}
