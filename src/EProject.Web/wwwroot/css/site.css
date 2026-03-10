@@ -29,3 +29,20 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.welcome-wrapper {
+    min-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-card {
+    background: #ffffff;
+    padding: 3rem;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 700px;
+    width: 100%;
+    border: 1px solid #e9ecef;
+}
