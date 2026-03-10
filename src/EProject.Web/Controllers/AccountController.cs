@@ -17,7 +17,7 @@ namespace EProject.Web.Controllers
             _context = context;
         }
 
-        // REGISTER 
+        // REGISTER
 
         [HttpGet]
         public IActionResult Register()
@@ -30,13 +30,7 @@ namespace EProject.Web.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
-
-            model.Email = model.Email.Trim();
-            model.Name = model.Name.Trim();
-            model.PhoneNumber = model.PhoneNumber.Trim();
 
             bool emailExists = await _context.UserAccounts
                 .AnyAsync(u => u.Email.ToLower() == model.Email.ToLower());
@@ -58,10 +52,12 @@ namespace EProject.Web.Controllers
             _context.UserAccounts.Add(user);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index", "Home");
+            TempData["SuccessMessage"] = "Registration successful! You can now log in.";
+
+            return RedirectToAction("Login");
         }
 
-        // LOGIN 
+        // LOGIN
 
         [HttpGet]
         public IActionResult Login()
@@ -74,24 +70,20 @@ namespace EProject.Web.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
-
-            string email = model.Email.Trim();
 
             var user = await _context.UserAccounts
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == model.Email.ToLower());
 
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Email does not exist in the system.");
+                ModelState.AddModelError("", "Email does not exist in the system.");
                 return View(model);
             }
 
             if (user.Password != model.Password)
             {
-                ModelState.AddModelError(string.Empty, "Password is wrong.");
+                ModelState.AddModelError("", "Password is wrong.");
                 return View(model);
             }
 
@@ -100,28 +92,35 @@ namespace EProject.Web.Controllers
                 new Claim(ClaimTypes.Name, user.Email)
             };
 
-            var claimsIdentity = new ClaimsIdentity(
+            var identity = new ClaimsIdentity(
                 claims,
                 CookieAuthenticationDefaults.AuthenticationScheme
             );
 
-            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+            var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                claimsPrincipal
+                principal
             );
+
+            TempData["SuccessMessage"] = "You have logged in successfully.";
 
             return RedirectToAction("Index", "Home");
         }
 
-        // LOGOUT 
+        // LOGOUT
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            TempData["SuccessMessage"] = "You have logged out successfully.";
+
             return RedirectToAction("Index", "Home");
         }
     }
