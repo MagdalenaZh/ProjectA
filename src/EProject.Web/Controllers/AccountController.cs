@@ -5,16 +5,19 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace EProject.Web.Controllers
 {
     public class AccountController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly PasswordHasher<UserAccount> _passwordHasher;
 
         public AccountController(AppDbContext context)
         {
             _context = context;
+            _passwordHasher = new PasswordHasher<UserAccount>();
         }
 
         // REGISTER
@@ -44,10 +47,12 @@ namespace EProject.Web.Controllers
             var user = new UserAccount
             {
                 Email = model.Email,
-                Password = model.Password,
                 Name = model.Name,
                 Phone = model.PhoneNumber
             };
+
+            // HASH PASSWORD BEFORE SAVING
+            user.Password = _passwordHasher.HashPassword(user, model.Password);
 
             _context.UserAccounts.Add(user);
             await _context.SaveChangesAsync();
@@ -81,7 +86,10 @@ namespace EProject.Web.Controllers
                 return View(model);
             }
 
-            if (user.Password != model.Password)
+            // VERIFY HASHED PASSWORD
+            var result = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
+
+            if (result == PasswordVerificationResult.Failed)
             {
                 ModelState.AddModelError("", "Password is wrong.");
                 return View(model);
