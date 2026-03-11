@@ -25,8 +25,8 @@ namespace EProject.Web.Entities
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Phone is required.")]
-        [Phone(ErrorMessage = "Invalid phone number format.")]
-        public string Phone { get; set; }
+        [RegularExpression(@"^\+?[0-9\s\-]{7,15}$", ErrorMessage = "Please enter a valid phone number.")]
+        public string Phone { get; set; } 
 
     }
 }
