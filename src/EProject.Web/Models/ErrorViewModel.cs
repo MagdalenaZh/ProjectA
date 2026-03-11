@@ -1,3 +1,4 @@
+
 namespace EProject.Web.Models;
 
 public class ErrorViewModel
