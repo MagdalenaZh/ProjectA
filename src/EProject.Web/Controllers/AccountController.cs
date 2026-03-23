@@ -3,9 +3,9 @@ using EProject.Web.Entities;
 using EProject.Web.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 
 namespace EProject.Web.Controllers
 {
@@ -19,8 +19,6 @@ namespace EProject.Web.Controllers
             _context = context;
             _passwordHasher = new PasswordHasher<UserAccount>();
         }
-
-        // REGISTER
 
         [HttpGet]
         public IActionResult Register()
@@ -51,7 +49,6 @@ namespace EProject.Web.Controllers
                 Phone = model.PhoneNumber
             };
 
-            // HASH PASSWORD BEFORE SAVING
             user.Password = _passwordHasher.HashPassword(user, model.Password);
 
             _context.UserAccounts.Add(user);
@@ -61,8 +58,6 @@ namespace EProject.Web.Controllers
 
             return RedirectToAction("Login");
         }
-
-        // LOGIN
 
         [HttpGet]
         public IActionResult Login()
@@ -82,22 +77,23 @@ namespace EProject.Web.Controllers
 
             if (user == null)
             {
-                ModelState.AddModelError("", "Email does not exist in the system.");
+                ModelState.AddModelError(string.Empty, "Email does not exist in the system.");
                 return View(model);
             }
 
-            // VERIFY HASHED PASSWORD
             var result = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
 
             if (result == PasswordVerificationResult.Failed)
             {
-                ModelState.AddModelError("", "Password is wrong.");
+                ModelState.AddModelError(string.Empty, "Password is wrong.");
                 return View(model);
             }
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Email)
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             var identity = new ClaimsIdentity(
@@ -116,8 +112,6 @@ namespace EProject.Web.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
-        // LOGOUT
 
         [HttpPost]
         [ValidateAntiForgeryToken]

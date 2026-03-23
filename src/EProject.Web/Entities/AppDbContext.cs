@@ -15,5 +15,7 @@ namespace EProject.Web.Entities
         {
             base.OnModelCreating(modelBuilder);
         }
+
+        public DbSet<Project> Projects { get; set; }
     }
 }

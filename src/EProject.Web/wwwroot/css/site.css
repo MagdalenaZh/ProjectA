@@ -1,33 +1,82 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    background-color: #f8f9fa;
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem #fff, 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+img,
+.card,
+.form-control,
+.form-select,
+.btn {
+    max-width: 100%;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.card {
+    overflow: hidden;
+    border-radius: 1rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: 0.75rem;
+}
+
+.alert {
+    border-radius: 0.75rem;
+}
+
+.auth-container {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
 }
 
 .welcome-wrapper {
@@ -40,55 +89,100 @@ body {
 .welcome-card {
     background: #ffffff;
     padding: 3rem;
-    border-radius: 16px;
+    border-radius: 1rem;
     text-align: center;
     max-width: 700px;
     width: 100%;
     border: 1px solid #e9ecef;
 }
 
-body {
-    background-color: #f8f9fa;
-}
-
-.card {
-    border-radius: 14px;
-}
-
-.form-control {
-    border-radius: 10px;
-}
-
-.btn-dark {
-    border-radius: 10px;
-}
-
-html, body {
-    height: 100%;
-    margin: 0;
-    background-color: #f8f9fa;
-}
-
-.card {
-    border-radius: 14px;
-}
-
-.form-control {
-    border-radius: 10px;
-}
-
-.btn-dark {
-    border-radius: 10px;
-}
-
-.auth-container {
-    height: calc(100vh - 120px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.auth-card {
+.nav-auth-list {
     width: 100%;
-    max-width: 420px;
+    gap: 0.25rem;
+}
+
+.nav-mobile-centered {
+    text-align: center;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.nav-action-link,
+.nav-action-button {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 0.5rem 0;
+    text-decoration: none;
+    border-radius: 0;
+    font-weight: 500;
+}
+
+.nav-action-button {
+    appearance: none;
+}
+
+.nav-action-primary {
+    color: var(--bs-primary);
+}
+
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        text-align: center;
+    }
+
+    .nav-auth-list {
+        align-items: center;
+    }
+
+    .nav-action-link,
+    .nav-action-button {
+        border: 0;
+        background: transparent;
+    }
+}
+
+@media (min-width: 992px) {
+    .nav-auth-list {
+        width: auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .nav-mobile-centered {
+        text-align: left;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .nav-action-link,
+    .nav-action-button {
+        width: auto;
+        padding: 0.5rem 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.5rem;
+    }
+
+    .nav-action-link {
+        color: var(--bs-dark);
+    }
+
+    .nav-action-primary {
+        color: #fff !important;
+        background-color: var(--bs-primary);
+        border-color: var(--bs-primary);
+    }
+
+    .nav-action-button {
+        color: var(--bs-dark);
+        border-color: var(--bs-secondary-border-subtle);
+        background-color: #fff;
+    }
+
+        .nav-action-link:hover,
+        .nav-action-button:hover {
+            opacity: 0.95;
+        }
 }
