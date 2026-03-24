@@ -3,6 +3,7 @@ using EProject.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace EProject.Web.Controllers;
 
@@ -17,11 +18,18 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var projects = new List<EProject.Web.Entities.Project>();
+        // Get 5 most-recently completed projects for all
+        var completedProjects = await _context.Projects
+            .Where(p => p.Status == "complete")
+            .OrderByDescending(p => p.Id)
+            .Take(5)
+            .ToListAsync();
+
+        var userProjects = new List<EProject.Web.Entities.Project>();
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            var email = User.Identity.Name;
+            var email = User.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
 
             if (!string.IsNullOrWhiteSpace(email))
             {
@@ -29,7 +37,8 @@ public class HomeController : Controller
 
                 if (user != null)
                 {
-                    projects = await _context.Projects
+                    // Get the specific user's projects 
+                    userProjects = await _context.Projects
                         .Where(p => p.UserAccountId == user.Id)
                         .OrderByDescending(p => p.Id)
                         .ToListAsync();
@@ -37,7 +46,10 @@ public class HomeController : Controller
             }
         }
 
-        return View(projects);
+        // Mix both lists so the View displays all relevant projects
+        var allProjects = completedProjects.Union(userProjects).ToList();
+
+        return View(allProjects);
     }
 
     public IActionResult Privacy()

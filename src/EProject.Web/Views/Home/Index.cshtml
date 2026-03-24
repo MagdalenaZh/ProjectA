@@ -18,6 +18,42 @@
         </div>
     </div>
 
+    <div class="row justify-content-center mb-5">
+        <div class="col-12 col-lg-10">
+            <h2 class="h3 mb-4 fw-bold text-center text-md-start">Recently Completed Projects</h2>
+
+            @if (Model != null && Model.Any(p => p.Status == "complete"))
+            {
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    @foreach (var project in Model.Where(p => p.Status == "complete").Take(5))
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-0 border-top border-success border-4">
+                                <div class="card-body p-4">
+                                    <h3 class="h5 fw-bold mb-2">@project.Title</h3>
+                                    <p class="text-muted small mb-3">@project.Description</p>
+                                    <div class="mt-auto pt-2 border-top">
+                                        <div class="d-flex justify-content-between">
+                                            <span class="small"><strong>By:</strong> @project.Author</span>
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle">@project.Status</span>
+                                        </div>
+                                        <p class="mb-0 mt-1 small"><strong>Language:</strong> @project.ProgrammingLanguage</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-light border shadow-sm text-center">
+                    No completed projects have been posted yet.
+                </div>
+            }
+        </div>
+    </div>
+
     @if (User.Identity != null && User.Identity.IsAuthenticated)
     {
         <div class="row justify-content-center">
