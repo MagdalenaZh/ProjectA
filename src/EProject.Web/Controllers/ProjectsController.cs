@@ -113,6 +113,34 @@ namespace EProject.Web.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await _context.UserAccounts.FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var project = await _context.Projects
+                .FirstOrDefaultAsync(p => p.Id == id && p.UserAccountId == user.Id);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
+
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
