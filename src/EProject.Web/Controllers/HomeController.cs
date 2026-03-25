@@ -3,6 +3,7 @@ using EProject.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace EProject.Web.Controllers;
 
@@ -17,11 +18,11 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        var projects = new List<EProject.Web.Entities.Project>();
+        int? currentUserId = null;
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            var email = User.Identity.Name;
+            var email = User.FindFirstValue(ClaimTypes.Email);
 
             if (!string.IsNullOrWhiteSpace(email))
             {
@@ -29,15 +30,21 @@ public class HomeController : Controller
 
                 if (user != null)
                 {
-                    projects = await _context.Projects
-                        .Where(p => p.UserAccountId == user.Id)
-                        .OrderByDescending(p => p.Id)
-                        .ToListAsync();
+                    currentUserId = user.Id;
                 }
             }
         }
 
-        return View(projects);
+        var completedProjects = await _context.Projects
+            .Where(p => p.Status == "complete")
+            .OrderByDescending(p => p.CompletedAt)
+            .ThenByDescending(p => p.Id)
+            .Take(5)
+            .ToListAsync();
+
+        ViewBag.CurrentUserId = currentUserId;
+
+        return View(completedProjects);
     }
 
     public IActionResult Privacy()

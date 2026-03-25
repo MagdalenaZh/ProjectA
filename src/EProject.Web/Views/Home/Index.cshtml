@@ -2,12 +2,13 @@
 
 @{
     ViewData["Title"] = "Home";
+    int? currentUserId = ViewBag.CurrentUserId != null ? (int)ViewBag.CurrentUserId : null;
 }
 
 <div class="container-fluid px-0">
     <div class="row justify-content-center mb-4">
         <div class="col-12 col-lg-10">
-            <div class="card border-0 shadow-sm rounded-4 bg-light">
+            <div class="card border-0 shadow-sm bg-light">
                 <div class="card-body p-4 p-md-5 text-center">
                     <h1 class="display-5 fw-bold mb-3">Welcome to e-Project</h1>
                     <p class="lead text-muted mb-0">
@@ -18,26 +19,65 @@
         </div>
     </div>
 
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        <div class="row justify-content-center">
-            <div class="col-12 col-lg-10">
-                <div class="d-flex flex-row flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
-                    <div>
-                        <h2 class="h3 mb-1">Your Projects</h2>
-                    </div>
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-10">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+                <div>
+                    <h2 class="h3 mb-1">Recently Completed Projects</h2>
+                    <p class="text-muted mb-0">The 5 most recently completed projects are shown here.</p>
+                </div>
+            </div>
 
-                    <div>
-                        <a asp-controller="Projects"
-                           asp-action="Create"
-                           asp-route-returnUrl="@Context.Request.Path"
-                           class="btn btn-primary">
-                            Add Project
-                        </a>
+            @if (!Model.Any())
+            {
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <h3 class="h5 mb-2">No completed projects yet</h3>
+                        <p class="text-muted mb-3">Once a project is marked as complete, it will appear here.</p>
+
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <a asp-controller="Projects"
+                                   asp-action="Index"
+                                   class="btn btn-outline-primary">
+                                View My Projects
+                            </a>
+                        }
                     </div>
                 </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @foreach (var project in Model)
+                    {
+                        <div class="col-12 col-md-6 col-xl-4">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-body p-4 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-start mb-3 gap-2">
+                                        <h3 class="h5 fw-bold mb-0">@project.Title</h3>
 
-               </div>
+                                        <span class="badge rounded-pill bg-success text-white">
+                                            Complete
+                                        </span>
+                                    </div>
+
+                                    <p class="text-muted mb-3 flex-grow-1">@project.Description</p>
+
+                                    <div class="small mb-3">
+                                        <p class="mb-2">
+                                            <span class="fw-semibold">Author:</span> @project.Author
+                                        </p>
+                                        <p class="mb-0">
+                                            <span class="fw-semibold">Programming Language:</span> @project.ProgrammingLanguage
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
         </div>
-    }
+    </div>
 </div>

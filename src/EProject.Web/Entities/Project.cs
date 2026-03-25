@@ -16,6 +16,7 @@ namespace EProject.Web.Entities
 
         [Required]
         [MaxLength(100)]
+        [RegularExpression(@"^([^0-9]*)$", ErrorMessage = "Author name cannot contain numbers.")]
         public string Author { get; set; } = string.Empty;
 
         [Required]
@@ -25,6 +26,10 @@ namespace EProject.Web.Entities
         [Required]
         [MaxLength(20)]
         public string Status { get; set; } = string.Empty;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? CompletedAt { get; set; }
 
         public int UserAccountId { get; set; }
     }
