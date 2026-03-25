@@ -14,6 +14,7 @@ namespace EProject.Web.Models
 
         [Required(ErrorMessage = "Author is required.")]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Author must be between 2 and 100 characters.")]
+        [RegularExpression(@"^([^0-9]*)$", ErrorMessage = "Author name cannot contain numbers.")]
         public string Author { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Programming language is required.")]
