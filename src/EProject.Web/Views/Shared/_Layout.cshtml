@@ -22,6 +22,13 @@
                     e-Project
                 </a>
 
+                @if (User.Identity != null && User.Identity.IsAuthenticated)
+                {
+                    <span class="nav-link text-dark">
+                        Hello, @User.Identity.Name
+                    </span>
+                }
+
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -36,10 +43,13 @@
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
                         <ul class="navbar-nav ms-auto nav-auth-list mt-3 mt-lg-0">
-                            <li class="nav-item d-none d-lg-block">
-                                <span class="nav-link text-dark">
-                                    Hello, @User.Identity.Name
-                                </span>
+                            <li class="nav-item">
+                                <a asp-controller="Projects"
+                                       asp-action="Create"
+                                       asp-route-returnUrl="@Context.Request.Path"
+                                       class="btn btn-primary">
+                                    Add Project
+                                </a>
                             </li>
 
                             <li class="nav-item">
@@ -95,7 +105,18 @@
         {
             <div class="alert alert-success alert-dismissible fade show mt-3 shadow-sm" role="alert">
                 @TempData["SuccessMessage"]
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close">
+                </button>
+            </div>
+        }
 
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show mt-3 shadow-sm" role="alert">
+                @TempData["ErrorMessage"]
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="alert"

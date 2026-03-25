@@ -26,18 +26,6 @@
                     <h2 class="h3 mb-1">Recently Completed Projects</h2>
                     <p class="text-muted mb-0">The 5 most recently completed projects are shown here.</p>
                 </div>
-
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <div>
-                        <a asp-controller="Projects"
-                               asp-action="Create"
-                               asp-route-returnUrl="@Context.Request.Path"
-                               class="btn btn-primary">
-                            Add Project
-                        </a>
-                    </div>
-                }
             </div>
 
             @if (!Model.Any())
