@@ -17,6 +17,11 @@ public class ProjectsController : Controller
         _context = context;
     }
 
+    private static bool IsCompleteStatus(string? status)
+    {
+        return string.Equals(status, "complete", StringComparison.OrdinalIgnoreCase);
+    }
+
     [HttpGet]
     public async Task<IActionResult> Index()
     {
@@ -84,6 +89,7 @@ public class ProjectsController : Controller
                 Author = model.Author,
                 ProgrammingLanguage = model.ProgrammingLanguage,
                 Status = model.Status,
+                CompletedAt = IsCompleteStatus(model.Status) ? DateTime.UtcNow : null,
                 UserAccountId = user.Id
             };
 
@@ -177,11 +183,23 @@ public class ProjectsController : Controller
 
         try
         {
+            var wasComplete = IsCompleteStatus(project.Status);
+            var isNowComplete = IsCompleteStatus(model.Status);
+
             project.Title = model.Title;
             project.Description = model.Description;
             project.Author = model.Author;
             project.ProgrammingLanguage = model.ProgrammingLanguage;
             project.Status = model.Status;
+
+            if (!wasComplete && isNowComplete)
+            {
+                project.CompletedAt = DateTime.UtcNow;
+            }
+            else if (wasComplete && !isNowComplete)
+            {
+                project.CompletedAt = null;
+            }
 
             await _context.SaveChangesAsync();
 
@@ -192,6 +210,59 @@ public class ProjectsController : Controller
         {
             ModelState.AddModelError(string.Empty, "An error occurred while updating the project.");
             return View(model);
+        }
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id, string? returnUrl = null)
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email);
+
+        if (string.IsNullOrWhiteSpace(email))
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var user = await _context.UserAccounts.FirstOrDefaultAsync(u => u.Email == email);
+
+        if (user == null)
+        {
+            return RedirectToAction("Login", "Account");
+        }
+
+        var project = await _context.Projects
+            .FirstOrDefaultAsync(p => p.Id == id && p.UserAccountId == user.Id);
+
+        if (project == null)
+        {
+            return NotFound();
+        }
+
+        try
+        {
+            _context.Projects.Remove(project);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Project deleted successfully.";
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToAction("Index");
+        }
+        catch
+        {
+            TempData["ErrorMessage"] = "An error occurred while deleting the project.";
+
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

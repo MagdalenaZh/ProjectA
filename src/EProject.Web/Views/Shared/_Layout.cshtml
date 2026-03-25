@@ -17,14 +17,10 @@
         <nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm mb-4">
             <div class="container-fluid px-3 px-md-4 px-lg-5">
                 <a class="navbar-brand fw-bold fs-4"
-                   asp-controller="Home"
-                   asp-action="Index">
+                       asp-controller="Home"
+                       asp-action="Index">
                     e-Project
                 </a>
-                
-                <span class="nav-link nav-mobile-centered text-dark d-none d-lg-inline">
-                    Hello, @User.Identity.Name
-                </span>
 
                 <button class="navbar-toggler"
                         type="button"
@@ -40,12 +36,16 @@
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
                         <ul class="navbar-nav ms-auto nav-auth-list mt-3 mt-lg-0">
-                           
+                            <li class="nav-item d-none d-lg-block">
+                                <span class="nav-link text-dark">
+                                    Hello, @User.Identity.Name
+                                </span>
+                            </li>
 
                             <li class="nav-item">
                                 <a asp-controller="Projects"
-                                   asp-action="Index"
-                                   class="nav-link nav-action-link text-dark">
+                                       asp-action="Index"
+                                       class="nav-link nav-action-link text-dark">
                                     My Projects
                                 </a>
                             </li>
@@ -70,16 +70,16 @@
                         <ul class="navbar-nav ms-auto nav-auth-list mt-3 mt-lg-0">
                             <li class="nav-item">
                                 <a class="nav-link nav-action-link text-dark"
-                                   asp-controller="Account"
-                                   asp-action="Login">
+                                       asp-controller="Account"
+                                       asp-action="Login">
                                     Login
                                 </a>
                             </li>
 
                             <li class="nav-item">
                                 <a class="nav-link nav-action-link nav-action-primary"
-                                   asp-controller="Account"
-                                   asp-action="Register">
+                                       asp-controller="Account"
+                                       asp-action="Register">
                                     Register
                                 </a>
                             </li>

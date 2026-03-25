@@ -26,6 +26,10 @@ namespace EProject.Web.Entities
         [MaxLength(20)]
         public string Status { get; set; } = string.Empty;
 
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public DateTime? CompletedAt { get; set; }
+
         public int UserAccountId { get; set; }
     }
 }

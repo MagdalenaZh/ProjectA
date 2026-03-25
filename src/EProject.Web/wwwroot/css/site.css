@@ -186,3 +186,28 @@ textarea {
             opacity: 0.95;
         }
 }
+
+.status-completed {
+    background-color: #198754 !important;
+    color: white !important;
+}
+
+.status-inprogress {
+    background-color: #fd7e14 !important;
+    color: white !important;
+}
+
+.status-pending {
+    background-color: #6c757d !important;
+    color: white !important;
+}
+
+.status-todo {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
+
+.status-default {
+    background-color: #212529 !important;
+    color: white !important;
+}

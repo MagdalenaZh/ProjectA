@@ -18,18 +18,11 @@ public class HomeController : Controller
 
     public async Task<IActionResult> Index()
     {
-        // Get 5 most-recently completed projects for all
-        var completedProjects = await _context.Projects
-            .Where(p => p.Status == "complete")
-            .OrderByDescending(p => p.Id)
-            .Take(5)
-            .ToListAsync();
-
-        var userProjects = new List<EProject.Web.Entities.Project>();
+        int? currentUserId = null;
 
         if (User.Identity != null && User.Identity.IsAuthenticated)
         {
-            var email = User.FindFirstValue(System.Security.Claims.ClaimTypes.Email);
+            var email = User.FindFirstValue(ClaimTypes.Email);
 
             if (!string.IsNullOrWhiteSpace(email))
             {
@@ -37,19 +30,21 @@ public class HomeController : Controller
 
                 if (user != null)
                 {
-                    // Get the specific user's projects 
-                    userProjects = await _context.Projects
-                        .Where(p => p.UserAccountId == user.Id)
-                        .OrderByDescending(p => p.Id)
-                        .ToListAsync();
+                    currentUserId = user.Id;
                 }
             }
         }
 
-        // Mix both lists so the View displays all relevant projects
-        var allProjects = completedProjects.Union(userProjects).ToList();
+        var completedProjects = await _context.Projects
+            .Where(p => p.Status == "complete")
+            .OrderByDescending(p => p.CompletedAt)
+            .ThenByDescending(p => p.Id)
+            .Take(5)
+            .ToListAsync();
 
-        return View(allProjects);
+        ViewBag.CurrentUserId = currentUserId;
+
+        return View(completedProjects);
     }
 
     public IActionResult Privacy()
