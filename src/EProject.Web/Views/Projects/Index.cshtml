@@ -95,18 +95,21 @@
                                         Edit
                                     </a>
 
-                                    <form asp-controller="Projects"
-                                          asp-action="Delete"
-                                          asp-route-id="@project.Id"
-                                          asp-route-returnUrl="@Context.Request.Path"
-                                          method="post"
-                                          class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit"
-                                                class="btn btn-danger btn-sm">
-                                            Delete
-                                        </button>
-                                    </form>
+                                    @if (User.Identity != null && User.Identity.IsAuthenticated && project.Status?.Trim().ToLower() != "in-progress")
+                                    {
+                                        <form asp-controller="Projects"
+                                              asp-action="Delete"
+                                              asp-route-id="@project.Id"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Are you sure you want to delete project @(project.Title)?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    }
                                 </div>
                             </div>
                         </div>
