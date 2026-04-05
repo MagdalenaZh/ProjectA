@@ -1,0 +1,104 @@
+﻿@model IEnumerable<EProject.Web.Entities.Project>
+
+@{
+    ViewData["Title"] = "Search Projects";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-10">
+
+        <div class="mb-3">
+            <a class="btn btn-outline-secondary btn-sm"
+               asp-controller="Home"
+               asp-action="Index">
+                ← Back
+            </a>
+        </div>
+
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+            <div>
+                <h1 class="h2 fw-bold mb-1">Search Projects</h1>
+                <p class="text-muted mb-0">Search all projects by title, description, author, or programming language.</p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body p-4">
+                <form asp-controller="Search" asp-action="Index" method="get" class="d-flex flex-column flex-md-row gap-3">
+                    <input type="text" name="searchString" class="form-control form-control-lg"
+                           placeholder="Enter a search string..." value="@ViewBag.SearchTerm" required />
+                    <button type="submit" class="btn btn-primary px-5">Search</button>
+                </form>
+            </div>
+        </div>
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="card shadow-sm border-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3">Project Info</th>
+                                <th class="py-3">Author</th>
+                                <th class="py-3">Language</th>
+                                <th class="py-3">Status</th>
+                                <th class="px-4 py-3 text-end">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var project in Model)
+                            {
+                                // Reuse your existing badge color logic
+                                var statusClass = project.Status?.Trim().ToLower() switch
+                                {
+                                    "complete" => "bg-success text-white",
+                                    "in-progress" => "bg-warning text-dark",
+                                    "pending" => "bg-secondary text-white",
+                                    _ => "bg-dark text-white"
+                                };
+
+                                // Reuse your description truncation logic
+                                var shortDescription = !string.IsNullOrWhiteSpace(project.Description) && project.Description.Length > 120
+                                ? project.Description.Substring(0, 120) + "..."
+                                : project.Description;
+
+                                <tr>
+                                    <td class="px-4 py-3">
+                                        <div class="fw-bold text-dark mb-1">@project.Title</div>
+                                        <div class="text-muted small" style="max-width: 400px; white-space: normal;">@shortDescription</div>
+                                    </td>
+                                    <td class="py-3">@project.Author</td>
+                                    <td class="py-3">
+                                        <span class="fw-semibold">@project.ProgrammingLanguage</span>
+                                    </td>
+                                    <td class="py-3">
+                                        <span class="badge rounded-pill @statusClass">
+                                            @project.Status
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-end">
+                                        <a asp-controller="Projects"
+                                           asp-action="Details"
+                                           asp-route-id="@project.Id"
+                                           class="btn btn-outline-primary btn-sm">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrWhiteSpace(ViewBag.SearchTerm))
+        {
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5 text-center">
+                    <p class="text-muted mb-0 fs-5">No projects found containing the string "<strong>@ViewBag.SearchTerm</strong>".</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>
