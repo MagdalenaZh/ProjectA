@@ -232,7 +232,7 @@ namespace EProject.Web.Controllers
                 await _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Project updated successfully.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
