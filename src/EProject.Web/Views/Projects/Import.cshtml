@@ -3,23 +3,33 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
+    <div class="col-12 col-lg-9">
+
+        <div class="mb-3">
+            <a class="btn btn-outline-secondary btn-sm"
+                   asp-controller="Home"
+                   asp-action="Index">
+                ← Back
+            </a>
+        </div>
+
         <div class="mb-4">
             <h1 class="h2 fw-bold mb-2">Import Projects</h1>
-            <p class="text-muted">Upload a JSON file to import projects into your account.</p>
+            <p class="text-muted mb-0">
+                Upload a JSON or XML file containing projects to import into your account.
+            </p>
         </div>
 
         @if (ViewBag.ErrorMessage != null)
         {
             <div class="alert alert-danger shadow-sm border-0 mb-4">
                 <h5 class="alert-heading fw-bold">Import Failed</h5>
-                <p class="mb-0">@ViewBag.ErrorMessage</p>
-                
+                <p class="mb-2">@ViewBag.ErrorMessage</p>
+
                 @if (ViewBag.ValidationErrors != null)
                 {
-                    <hr />
-                    <ul class="mb-0 small">
-                        @foreach (var error in ViewBag.ValidationErrors)
+                    <ul class="mb-0">
+                        @foreach (string error in ViewBag.ValidationErrors)
                         {
                             <li>@error</li>
                         }
@@ -30,31 +40,86 @@
 
         <div class="card shadow-sm border-0 mb-4">
             <div class="card-body p-4">
-                <h2 class="h5 fw-bold mb-3">Upload JSON File</h2>
-                
-                <form asp-controller="Import" asp-action="Upload" method="post" enctype="multipart/form-data">
-                    <div class="mb-4">
-                        <input type="file" name="importFile" class="form-control form-control-lg" accept=".json" required />
+                <h2 class="h5 fw-bold mb-3">Upload File</h2>
+
+                <form asp-controller="Import"
+                      asp-action="Upload"
+                      method="post"
+                      enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <input type="file"
+                               name="importFile"
+                               class="form-control"
+                               accept=".json,.xml"
+                               required />
                     </div>
-                    <button type="submit" class="btn btn-primary px-4">Upload and Import</button>
+
+                    <button type="submit" class="btn btn-primary">
+                        Upload and Import
+                    </button>
                 </form>
             </div>
         </div>
 
-        <div class="card shadow-sm border-0 bg-light">
-            <div class="card-body p-4">
-                <h2 class="h5 fw-bold mb-3">Required JSON Format</h2>
-                <p class="small text-muted mb-3">Your file must contain an array of project objects because of the JSON schema.</p>
-                <pre class="bg-dark text-white p-3 rounded small mb-0"><code>[
-  {
-    "Title": "Project Alpha",
-    "Description": "A comprehensive description over 10 characters long.",
-    "Author": "Jane Doe",
-    "ProgrammingLanguage": "C#",
-    "Status": "in-progress" // Must be: pending, in-progress, or complete
-  }
-]</code></pre>
+        <div class="row g-4">
+            <div class="col-12 col-xl-6">
+                <div class="card shadow-sm border-0 h-100 bg-light">
+                    <div class="card-body p-4">
+                        <h2 class="h5 fw-bold mb-3">Required JSON Format</h2>
+                        <p class="text-muted small">
+                            The JSON file must contain an array of project objects.
+                        </p>
+
+                        <pre class="bg-dark text-white p-3 rounded small mb-0"><code>[
+                            {
+                            "Title": "Project Alpha",
+                            "Description": "A description longer than 10 characters.",
+                            "Author": "Jane Doe",
+                            "ProgrammingLanguage": "C#",
+                            "Status": "pending"
+                            },
+                            {
+                            "Title": "Project Beta",
+                            "Description": "Another valid project description.",
+                            "Author": "John Smith",
+                            "ProgrammingLanguage": "Java",
+                            "Status": "complete"
+                            }
+                            ]</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="card shadow-sm border-0 h-100 bg-light">
+                        <div class="card-body p-4">
+                            <h2 class="h5 fw-bold mb-3">Required XML Format</h2>
+                            <p class="text-muted small">
+                                The XML file must use a <code>&lt;projects&gt;</code> root and one or more <code>&lt;project&gt;</code> elements.
+                            </p>
+
+                            <pre class="bg-dark text-white p-3 rounded small mb-0"><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+                                &lt;projects&gt;
+                                &lt;project&gt;
+                                &lt;Title&gt;Project Alpha&lt;/Title&gt;
+                                &lt;Description&gt;A description longer than 10 characters.&lt;/Description&gt;
+                                &lt;Author&gt;Jane Doe&lt;/Author&gt;
+                                &lt;ProgrammingLanguage&gt;C#&lt;/ProgrammingLanguage&gt;
+                                &lt;Status&gt;pending&lt;/Status&gt;
+                                &lt;/project&gt;
+                                &lt;project&gt;
+                                &lt;Title&gt;Project Beta&lt;/Title&gt;
+                                &lt;Description&gt;Another valid project description.&lt;/Description&gt;
+                                &lt;Author&gt;John Smith&lt;/Author&gt;
+                                &lt;ProgrammingLanguage&gt;Java&lt;/ProgrammingLanguage&gt;
+                                &lt;Status&gt;complete&lt;/Status&gt;
+                                &lt;/project&gt;
+                                &lt;/projects&gt;</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>

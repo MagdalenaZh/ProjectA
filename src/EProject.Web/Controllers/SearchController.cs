@@ -2,12 +2,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using EProject.Web.Entities;
-using EProject.Web.Models; 
-using System.Linq;
+using System.Security.Claims;
 
 namespace EProject.Web.Controllers
 {
-    [Authorize] // logged-in users only
+    [Authorize]
     public class SearchController : Controller
     {
         private readonly AppDbContext _context;
@@ -18,46 +17,65 @@ namespace EProject.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string? searchString)
         {
+            ViewBag.SearchTerm = searchString;
+
             if (string.IsNullOrWhiteSpace(searchString))
             {
-                return View(new List<Project>());
+                return View("~/Views/Projects/Search.cshtml", new List<Project>());
             }
 
-            var query = searchString.ToLower();
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var currentUser = await _context.UserAccounts.FirstOrDefaultAsync(u => u.Email == email);
+            ViewBag.CurrentUserId = currentUser?.Id;
 
-            // Get projects for occurrence count
-            var allProjects = await _context.Projects.ToListAsync();
+            var term = searchString.Trim().ToLower();
 
-            var searchResults = allProjects
+            var allProjects = await _context.Projects
+                .OrderByDescending(p => p.Id)
+                .ToListAsync();
+
+            var results = allProjects
                 .Select(p => new
                 {
                     Project = p,
-                    Score = CalculateScore(p, query)
+                    Score = CalculateScore(p, term)
                 })
                 .Where(x => x.Score > 0)
                 .OrderByDescending(x => x.Score)
+                .ThenByDescending(x => x.Project.Id)
                 .Select(x => x.Project)
                 .ToList();
 
-            ViewBag.SearchTerm = searchString;
-            return View(searchResults);
+            return View("~/Views/Projects/Search.cshtml", results);
         }
 
-        private int CalculateScore(Project p, string term)
+        private static int CalculateScore(Project p, string term)
         {
-            int Count(string source)
+            static int CountOccurrences(string? source, string term)
             {
-                if (string.IsNullOrEmpty(source)) return 0;
+                if (string.IsNullOrWhiteSpace(source) || string.IsNullOrWhiteSpace(term))
+                    return 0;
+
                 source = source.ToLower();
-                return (source.Length - source.Replace(term, "").Length) / term.Length;
+
+                int count = 0;
+                int index = 0;
+
+                while ((index = source.IndexOf(term, index, StringComparison.Ordinal)) != -1)
+                {
+                    count++;
+                    index += term.Length;
+                }
+
+                return count;
             }
 
-            return Count(p.Title) +
-                   Count(p.Description) +
-                   Count(p.Author) +
-                   Count(p.ProgrammingLanguage);
+            return CountOccurrences(p.Title, term)
+                 + CountOccurrences(p.Description, term)
+                 + CountOccurrences(p.Author, term)
+                 + CountOccurrences(p.ProgrammingLanguage, term);
         }
     }
 }

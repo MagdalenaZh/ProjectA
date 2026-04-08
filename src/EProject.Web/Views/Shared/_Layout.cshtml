@@ -22,13 +22,6 @@
                     e-Project
                 </a>
 
-                @if (User.Identity != null && User.Identity.IsAuthenticated)
-                {
-                    <span class="nav-link text-dark">
-                        Hello, @User.Identity.Name
-                    </span>
-                }
-
                 <button class="navbar-toggler"
                         type="button"
                         data-bs-toggle="collapse"
@@ -42,74 +35,63 @@
                 <div class="collapse navbar-collapse" id="mainNavbar">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <ul class="navbar-nav ms-auto nav-auth-list mt-3 mt-lg-0">
-                            <li class="nav-item">
-                                <a asp-controller="Projects"
-                                       asp-action="Create"
-                                       asp-route-returnUrl="@Context.Request.Path"
-                                       class="btn btn-primary">
-                                    Add Project
-                                </a>
-                            </li>
+                        <div class="ms-auto d-flex flex-column flex-lg-row align-items-lg-center gap-2 gap-lg-3 mt-3 mt-lg-0">
+                            <span class="text-dark fw-semibold">
+                                Hello, @User.Identity.Name
+                            </span>
 
-                            <li class="nav-item">
-                                <a asp-controller="Projects"
-                                       asp-action="Index"
-                                       class="nav-link nav-action-link text-dark">
-                                    My Projects
-                                </a>
-                            </li>
+                            <a asp-controller="Projects"
+                                   asp-action="Create"
+                                   asp-route-returnUrl="@Context.Request.Path"
+                                   class="btn btn-primary btn-sm">
+                                Add Project
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link nav-action-link text-dark fw-bold"
-                                   asp-controller="Search"
-                                   asp-action="Index">
-                                    Search
-                                </a>
-                            </li>
+                            <a asp-controller="Projects"
+                                   asp-action="Index"
+                                   class="nav-link text-dark p-0">
+                                My Projects
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link nav-action-link text-dark fw-bold"
-                                    asp-controller="Import"
-                                    asp-action="Index">
-                                    Import
-                                </a>
-                            </li>
+                            <a asp-controller="Search"
+                                   asp-action="Index"
+                                   class="nav-link text-dark p-0">
+                                Search
+                            </a>
 
-                            <li class="nav-item">
-                                <form asp-controller="Account"
-                                      asp-action="Logout"
-                                      method="post"
-                                      class="d-inline w-100">
-                                    @Html.AntiForgeryToken()
+                            <a asp-controller="Import"
+                                   asp-action="Index"
+                                   class="nav-link text-dark p-0">
+                                Import
+                            </a>
 
-                                    <button type="submit"
-                                            class="nav-link nav-action-link nav-action-button text-dark border-0 bg-transparent">
-                                        Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
+                            <form asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post"
+                                  class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        class="btn btn-link nav-link text-dark p-0 text-decoration-none">
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
                     }
                     else
                     {
-                        <ul class="navbar-nav ms-auto nav-auth-list mt-3 mt-lg-0">
-                            <li class="nav-item">
-                                <a class="nav-link nav-action-link text-dark"
-                                       asp-controller="Account"
-                                       asp-action="Login">
-                                    Login
-                                </a>
-                            </li>
+                        <div class="ms-auto d-flex flex-column flex-lg-row align-items-lg-center gap-2 gap-lg-3 mt-3 mt-lg-0">
+                            <a asp-controller="Account"
+                                   asp-action="Login"
+                                   class="nav-link text-dark p-0">
+                                Login
+                            </a>
 
-                            <li class="nav-item">
-                                <a class="nav-link nav-action-link nav-action-primary"
-                                       asp-controller="Account"
-                                       asp-action="Register">
-                                    Register
-                                </a>
-                            </li>
-                        </ul>
+                            <a asp-controller="Account"
+                                   asp-action="Register"
+                                   class="btn btn-outline-primary btn-sm">
+                                Register
+                            </a>
+                        </div>
                     }
                 </div>
             </div>
@@ -124,8 +106,7 @@
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="alert"
-                        aria-label="Close">
-                </button>
+                        aria-label="Close"></button>
             </div>
         }
 
@@ -136,8 +117,7 @@
                 <button type="button"
                         class="btn-close"
                         data-bs-dismiss="alert"
-                        aria-label="Close">
-                </button>
+                        aria-label="Close"></button>
             </div>
         }
 

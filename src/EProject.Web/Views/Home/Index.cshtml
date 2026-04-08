@@ -51,6 +51,13 @@
                 <div class="row g-4">
                     @foreach (var project in Model)
                     {
+                        var shortDescription = !string.IsNullOrWhiteSpace(project.Description) && project.Description.Length > 120
+                            ? project.Description.Substring(0, 120) + "..."
+                            : project.Description;
+
+                        bool isOwner = currentUserId.HasValue && project.UserAccountId == currentUserId.Value;
+                        bool canDelete = isOwner && project.Status?.Trim().ToLower() != "in-progress";
+
                         <div class="col-12 col-md-6 col-xl-4">
                             <div class="card border-0 shadow-sm h-100">
                                 <div class="card-body p-4 d-flex flex-column">
@@ -62,7 +69,7 @@
                                         </span>
                                     </div>
 
-                                    <p class="text-muted mb-3 flex-grow-1">@project.Description</p>
+                                    <p class="text-muted mb-3 flex-grow-1">@shortDescription</p>
 
                                     <div class="small mb-3">
                                         <p class="mb-2">
@@ -72,6 +79,33 @@
                                             <span class="fw-semibold">Programming Language:</span> @project.ProgrammingLanguage
                                         </p>
                                     </div>
+
+                                    @if (User.Identity != null && User.Identity.IsAuthenticated && isOwner)
+                                    {
+                                        <div class="mt-auto d-flex justify-content-end gap-2 flex-wrap">
+                                            <a asp-controller="Projects"
+                                                   asp-action="Edit"
+                                                   asp-route-id="@project.Id"
+                                                   class="btn btn-warning btn-sm text-dark">
+                                                Edit
+                                            </a>
+
+                                            @if (canDelete)
+                                            {
+                                                <form asp-controller="Projects"
+                                                      asp-action="Delete"
+                                                      asp-route-id="@project.Id"
+                                                      method="post"
+                                                      class="d-inline"
+                                                      onsubmit="return confirm('Are you sure you want to delete project @project.Title?');">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-danger btn-sm">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         </div>
