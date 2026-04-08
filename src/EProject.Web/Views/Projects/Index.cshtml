@@ -87,13 +87,14 @@
                                            class="btn btn-outline-primary btn-sm">
                                         View
                                     </a>
-
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
                                     <a asp-controller="Projects"
                                            asp-action="Edit"
                                            asp-route-id="@project.Id"
                                            class="btn btn-warning btn-sm text-dark">
                                         Edit
-                                    </a>
+                                    </a>}
 
                                     @if (User.Identity != null && User.Identity.IsAuthenticated && project.Status?.Trim().ToLower() != "in-progress")
                                     {

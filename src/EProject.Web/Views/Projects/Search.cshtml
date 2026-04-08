@@ -85,6 +85,24 @@
                                             View
                                         </a>
                                     </td>
+                                    <td class="px-4 py-3 text-end">
+                                    <a asp-controller="Projects"
+                                        asp-action="Details"
+                                        asp-route-id="@project.Id"
+                                        class="btn btn-outline-primary btn-sm">
+                                        View
+                                    </a>
+
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                    <a asp-controller="Projects"
+                                        asp-action="Edit"
+                                        asp-route-id="@project.Id"
+                                        class="btn btn-warning btn-sm text-dark ms-1">
+                                        Edit
+                                        </a>
+                                    }
+                                    </td>
                                 </tr>
                             }
                         </tbody>
