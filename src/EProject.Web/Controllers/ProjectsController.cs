@@ -243,7 +243,7 @@ namespace EProject.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id, string? returnUrl = null)
+        public async Task<IActionResult> Delete(int id)
         {
             var email = User.FindFirstValue(ClaimTypes.Email);
 
@@ -267,6 +267,12 @@ namespace EProject.Web.Controllers
                 return NotFound();
             }
 
+            if (project.Status?.Trim().ToLower() == "in-progress")
+            {
+                TempData["ErrorMessage"] = "In-progress projects cannot be deleted.";
+                return RedirectToAction("Index", "Projects");
+            }
+
             try
             {
                 _context.Projects.Remove(project);
@@ -274,23 +280,12 @@ namespace EProject.Web.Controllers
 
                 TempData["SuccessMessage"] = "Project deleted successfully.";
 
-                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
-
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
             catch
             {
                 TempData["ErrorMessage"] = "An error occurred while deleting the project.";
-
-                if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
-
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
         }
     }
